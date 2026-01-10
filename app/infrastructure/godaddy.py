@@ -1,5 +1,5 @@
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from app.domain.models import DomainAvailability, DomainAppraisal
 from app.domain.ports import AvailabilityProvider, AppraisalProvider
@@ -15,7 +15,9 @@ class GoDaddyBaseClient:
             "Accept": "application/json",
         }
 
-    def _get(self, endpoint: str, params: Dict[str, Any] = None) -> Dict[str, Any]:
+    def _get(
+        self, endpoint: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         url = f"{self._base_url}{endpoint}"
         try:
             response = requests.get(

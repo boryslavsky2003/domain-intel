@@ -1,4 +1,3 @@
-import sys
 from typing import List
 from app.application.use_cases import BatchEvaluateUseCase
 from app.domain.models import Recommendation
