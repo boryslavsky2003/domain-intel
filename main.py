@@ -43,6 +43,14 @@ def main():
         app.run()
         return
 
+    # Check if GUI is requested
+    if len(sys.argv) > 1 and sys.argv[1] == "gui":
+        from app.presentation.gui import DomainIntelGUI
+
+        app = DomainIntelGUI(batch_use_case)
+        app.run()
+        return
+
     cli = CLIHandler(batch_use_case)
 
     # 4. Input Handling
