@@ -28,6 +28,7 @@ class DomainIntelApp(App):
 
     BINDINGS = [
         ("d", "toggle_dark", "Toggle dark mode"),
+        ("c", "clear_data", "Clear results"),
         ("q", "quit", "Quit"),
     ]
 
@@ -51,6 +52,15 @@ class DomainIntelApp(App):
         table.add_columns(
             "DOMAIN", "AVAIL", "PRICE/GOVALUE", "PROB", "OWNER", "DECISION"
         )
+
+    def action_clear_data(self) -> None:
+        """Clear the table and reset input."""
+        self.query_one(DataTable).clear()
+        self.query_one(ProgressBar).update(total=100, progress=0)
+        inp = self.query_one(Input)
+        inp.disabled = False
+        inp.value = ""
+        inp.focus()
 
     async def on_input_submitted(self, message: Input.Submitted) -> None:
         if not message.value:

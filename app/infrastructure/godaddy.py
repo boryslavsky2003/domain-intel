@@ -36,10 +36,16 @@ class GoDaddyAvailabilityService(GoDaddyBaseClient, AvailabilityProvider):
         # Arthur: GET /v1/domains/available
         data = self._get("/v1/domains/available", params={"domain": domain})
 
+        price = data.get("price")
+        if price:
+            # GoDaddy API returns price in micros (millionths of currency unit)
+            # e.g. 12990000 = 12.99
+            price = float(price) / 1_000_000
+
         return DomainAvailability(
             domain=domain,
             available=data.get("available", False),
-            price=float(data.get("price", 0)) if data.get("price") else None,
+            price=price,
             currency=data.get("currency"),
         )
 
