@@ -12,3 +12,9 @@ class AppraisalProvider(ABC):
     @abstractmethod
     def get_appraisal(self, domain: str) -> DomainAppraisal:
         pass
+
+
+class WhoisProvider(ABC):
+    @abstractmethod
+    def get_registrant(self, domain: str) -> str:
+        pass

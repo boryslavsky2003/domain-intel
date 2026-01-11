@@ -30,3 +30,5 @@ class DomainEvaluation:
     go_value: float
     sale_probability: float
     recommendation: Recommendation
+    price: Optional[float] = None
+    registrant: Optional[str] = None

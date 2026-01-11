@@ -5,7 +5,7 @@ from app.domain.models import (
     DomainAvailability,
     DomainAppraisal,
 )
-from app.domain.ports import AvailabilityProvider, AppraisalProvider
+from app.domain.ports import AvailabilityProvider, AppraisalProvider, WhoisProvider
 
 
 class EvaluateDomainUseCase:
@@ -13,9 +13,11 @@ class EvaluateDomainUseCase:
         self,
         availability_provider: AvailabilityProvider,
         appraisal_provider: AppraisalProvider,
+        whois_provider: WhoisProvider,
     ):
         self._availability_provider = availability_provider
         self._appraisal_provider = appraisal_provider
+        self._whois_provider = whois_provider
 
     def execute(self, domain: str) -> DomainEvaluation:
         # Arthur's logic: Check availability first
@@ -25,6 +27,11 @@ class EvaluateDomainUseCase:
 
         # Get appraisal to combine results as per requirements
         appraisal: DomainAppraisal = self._appraisal_provider.get_appraisal(domain)
+
+        # Get WHOIS info if not available (or generally)
+        registrant = None
+        if not availability.available:
+            registrant = self._whois_provider.get_registrant(domain)
 
         # Arthur's rule engine
         is_buy = (
@@ -39,6 +46,8 @@ class EvaluateDomainUseCase:
             go_value=appraisal.go_value,
             sale_probability=appraisal.sale_probability,
             recommendation=Recommendation.BUY if is_buy else Recommendation.SKIP,
+            price=availability.price,
+            registrant=registrant,
         )
 
 

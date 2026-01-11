@@ -6,6 +6,7 @@ from app.infrastructure.godaddy import (
     GoDaddyAvailabilityService,
     GoDaddyAppraisalService,
 )
+from app.infrastructure.whois_service import GlobalWhoisService
 from app.application.use_cases import EvaluateDomainUseCase, BatchEvaluateUseCase
 from app.presentation.cli import CLIHandler
 
@@ -23,10 +24,13 @@ def main():
 
     availability_service = GoDaddyAvailabilityService(settings)
     appraisal_service = GoDaddyAppraisalService(settings)
+    whois_service = GlobalWhoisService()
 
     # 2. Application Setup
     evaluate_use_case = EvaluateDomainUseCase(
-        availability_provider=availability_service, appraisal_provider=appraisal_service
+        availability_provider=availability_service,
+        appraisal_provider=appraisal_service,
+        whois_provider=whois_service,
     )
     batch_use_case = BatchEvaluateUseCase(evaluate_use_case)
 

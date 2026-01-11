@@ -68,6 +68,7 @@ class GoDaddyAppraisalService(GoDaddyBaseClient, AppraisalProvider):
             return DomainAppraisal(
                 domain=domain, go_value=govalue, sale_probability=probability
             )
-        except Exception:
+        except Exception as e:
             # Arthur: Fail safe
+            print(f"Appraisal API Error for {domain}: {e}")
             return DomainAppraisal(domain=domain, go_value=0.0, sale_probability=0.0)
