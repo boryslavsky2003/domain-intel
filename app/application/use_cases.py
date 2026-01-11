@@ -117,9 +117,43 @@ class EvaluateDomainUseCase:
                     return False
 
         # Final Decision
-        return (
+        meets_api_criteria = (
             appraisal.go_value >= min_value and appraisal.sale_probability >= min_prob
         )
+
+        if meets_api_criteria:
+            return True
+
+        # Fallback Heuristic: If API data is missing (0), but domain structure is strong
+        if appraisal.go_value == 0 and appraisal.sale_probability == 0:
+            score = 0
+            # Preferred choice
+            if tld in premium_tlds:
+                score += 50
+            elif tld in standard_tlds:
+                score += 20
+
+            # Short length bonus
+            if len(domain_name) <= 6:
+                score += 30
+            elif len(domain_name) <= 10:
+                score += 15
+
+            # Clean name bonus
+            if "-" not in domain_name and not any(
+                char.isdigit() for char in domain_name
+            ):
+                score += 20
+
+            # If affordable
+            if availability.price and availability.price < 50:
+                score += 10
+
+            # Threshold for "Heuristic Buy"
+            if score >= 80:
+                return True
+
+        return False
 
 
 class BatchEvaluateUseCase:

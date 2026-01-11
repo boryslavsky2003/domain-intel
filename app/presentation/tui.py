@@ -97,7 +97,14 @@ class DomainIntelApp(App):
                 continue
 
             res = results[0]
-            decision = "BUY" if res.recommendation == Recommendation.BUY else "SKIP"
+            if res.recommendation == Recommendation.BUY:
+                # Check if it was a heuristic buy (Prob 0 but Buy)
+                if res.sale_probability == 0 and res.go_value == 0:
+                    decision = "BUY (Hint)"
+                else:
+                    decision = "BUY"
+            else:
+                decision = "SKIP"
 
             # Arthur: Formatting strings for TUI
             avail_str = "YES" if res.is_available else "NO"
